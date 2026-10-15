@@ -1,0 +1,71 @@
+#include <iostream>
+using namespace std;
+
+#define P 3
+#define R 3 
+
+int main() {
+    int i, j, k;
+    
+    int available[3] = {4, 3, 0};
+    
+    int max[P][R] = {
+        {4, 2, 2},
+        {2, 3, 2},
+        {3, 2, 1},
+    };
+    
+    int allocate[P][R] = {
+        {1, 0, 1},
+        {0, 1, 1},
+        {1, 1, 1},
+    };
+    
+    int need[P][R];
+    for (i = 0; i < P; i++) {
+        for (j = 0; j < R; j++) {
+            need[i][j] = max[i][j] - allocate[i][j];
+        }
+    }
+    
+    bool finish[P] = {false};
+    
+    int safeSeq[P];
+    int count = 0;
+    
+    while (count < P) {
+        bool found = false;
+        for (i = 0; i < P; i++) {
+            if (!finish[i]) {
+                bool canAllocate = true;
+                for (j = 0; j < R; j++) {
+                    if (need[i][j] > available[j]) {
+                        canAllocate = false;
+                        break;
+                    }
+                }
+                if (canAllocate) {
+                    for (k = 0; k < R; k++) {
+                        available[k] += allocate[i][k];
+                    }
+                    safeSeq[count++] = i;
+                    finish[i] = true;
+                    found = true;
+                }
+            }
+        }
+        if (!found) {
+            cout << "System is not in a safe state." << endl;
+            return 0;
+        }
+    }
+    
+    cout << "System is in a safe state." << endl;
+    cout << "Safe sequence is: ";
+    for (i = 0; i < P; i++) {
+        cout << "P" << safeSeq[i];
+        if (i != P - 1) cout << " -> ";
+    }
+    cout << endl;
+    return 0;
+}
